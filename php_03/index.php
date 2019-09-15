@@ -1,7 +1,5 @@
 <?php
 require_once('./Galgje.php');
-$galgje = new Galgje;
-
 ?>
 
 <!DOCTYPE html>
@@ -16,7 +14,9 @@ $galgje = new Galgje;
 
 
 <body>
+    <form action="" method="POST">
     <input type="text" name="woord"><input type="submit" name="submit" value="Submit"><input type="submit" value="Reset">
+    </form>
 </body>
 
 </html>

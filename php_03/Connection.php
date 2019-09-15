@@ -4,7 +4,7 @@ class Connection
     private static $server = "mysql:host=localhost;dbname=galgje01";
     private static $user = "root";
     private static $password = "";
-    protected static $conn;
+    public static $conn;
     public static function openConnection()
     {
         try {
