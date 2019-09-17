@@ -3,12 +3,18 @@ require_once('./Connection.php');
 session_start();
 Connection::openConnection();
 
-$stmt = Connection::$conn->prepare('SELECT * FROM woorden ORDER BY RAND () LIMIT 1');
-$stmt->execute();
-$woord = $stmt->fetch(PDO::FETCH_ASSOC);
+
 if (!isset($_SESSION['whitelist'])) {
     $_SESSION['whitelist'] = [];
 }
+if (!isset($_SESSION['woord'])) {
+    $stmt = Connection::$conn->prepare('SELECT * FROM woorden ORDER BY RAND () LIMIT 1');
+    $stmt->execute();
+    $woord = $stmt->fetch(PDO::FETCH_ASSOC);
+    $_SESSION['woord'] = $woord;
+}
+
+$woord = $_SESSION['woord'];
 
 try {
     if (!isset($_POST['woord']) && empty($_POST['woord'])) {
@@ -19,7 +25,7 @@ try {
 
 
     if (strpos($woord['woorden'], $woordform) === false) {
-        throw new Exception('Dit letter zit niet in het woord');
+        throw new Exception('Dit letter zit niet in het woord </br>');
     }
 
     $_SESSION['whitelist'][] = $woordform;
@@ -30,14 +36,19 @@ try {
 }
 
 $string = $woord['woorden'];
-$parts = "";
+$pattern ='/[^';
 foreach ($_SESSION['whitelist'] as $value) {
-    $parts .= "[^$value]";
+    $pattern .= $value . ",";
 }
-$pattern = "/" . $parts . "[\S]/";
-print_r($pattern);
-echo $woord['woorden'];
-print_r($_SESSION);
+$pattern =trim($pattern, ',');
+$pattern .= "]/";
+//echo $pattern;
+$pattern = $_SESSION['whitelist'] == [] ? '/\S/': $pattern;
+//$pattern = "/" . $parts . "[\S]/";
+// print_r($pattern);
+// echo $woord['woorden'];
+// print_r($_SESSION);
+
 //$pattern = "/[\S]/";
 $replace = '*';
 $poephoofd = preg_replace($pattern, $replace, $string);
